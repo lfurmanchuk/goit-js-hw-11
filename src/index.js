@@ -1,6 +1,8 @@
 import Notiflix, { Notify } from 'notiflix';
 import { PicturesAPI } from './js/picturesAPI';
 import { LoadMoreBtn } from './js/loadMoreBtn';
+import SimpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
 
 const refs = {
   searchForm: document.querySelector('#search-form'),
@@ -14,6 +16,7 @@ refs.searchForm.addEventListener('submit', onFormSubmit);
 
 const picturesAPI = new PicturesAPI();
 const loadMoreBtn = new LoadMoreBtn('load-more', onLoadMoreBtn);
+const simpleLightBox = new SimpleLightbox('.gallery .photo-card a');
 
 async function onFormSubmit(e) {
   e.preventDefault();
@@ -42,7 +45,8 @@ async function onFormSubmit(e) {
     }
 
     Notify.success(`Hooray! We found ${totalHits} images.`);
-    renderPictures(hits);
+      renderPictures(hits);
+      simpleLightBox.refresh();
     loadMoreBtn.show();
   } catch (error) {
     Notify.failure('Something is wrong');
@@ -97,7 +101,8 @@ async function onLoadMoreBtn() {
   loadMoreBtn.loading();
   try {
     const { hits } = await picturesAPI.fetchAPI();
-    renderPictures(hits);
+      renderPictures(hits);
+      simpleLightBox.refresh();
     loadMoreBtn.endLoading();
 
     if (hits.length < 40) {
