@@ -12,11 +12,11 @@ export class PicturesAPI {
     async fetchAPI() {
         const options = new URLSearchParams({
             key: API_KEY,
+            page: this.page,
             q: this.searchQuery,
             image_type: 'photo',
             orientation: 'horizontal',
             safesearch: 'true',
-            page: this.page,
             per_page: 40,
         });
 

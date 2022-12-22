@@ -1,5 +1,6 @@
 import Notiflix, { Notify } from 'notiflix';
 import { PicturesAPI } from './js/picturesAPI';
+import { LoadMoreBtn } from './js/loadMoreBtn';
 
 const refs = {
   searchForm: document.querySelector('#search-form'),
@@ -12,32 +13,44 @@ refs.searchForm.addEventListener('submit', onFormSubmit);
 // refs.loadMoreBtn.addEventListener('click', onLoadMoreBtn);
 
 const picturesAPI = new PicturesAPI();
+const loadMoreBtn = new LoadMoreBtn('load-more', onLoadMoreBtn);
 
 async function onFormSubmit(e) {
-    e.preventDefault();
+  e.preventDefault();
 
-    picturesAPI.query = e.currentTarget.elements.searchQuery.value.trim();
-    picturesAPI.resetPage();
+  picturesAPI.query = e.currentTarget.elements.searchQuery.value.trim();
+  picturesAPI.resetPage();
 
-    picturesAPI.fetchAPI().then(data => console.log(data));
+  picturesAPI.fetchAPI().then(data => console.log(data));
 
-    if (picturesAPI.query === '') {
-        Notify.warning('Enter something');
-        return;
+  if (picturesAPI.query === '') {
+    Notify.warning('Enter something');
+    return;
+  }
+
+  picturesAPI.resetPage();
+
+  try {
+    const { hits, totalHits } = await picturesAPI.fetchAPI();
+    if (totalHits === 0) {
+      Notify.warning(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+      clear();
+      loadMoreBtn.hide();
+      return;
     }
 
-    picturesAPI.resetPage();
-
-    try {
-        const {hits, totalHits} = await picturesAPI.fetchAPI();
-        renderPictures(hits);
-    } catch (error) {
-        Notify.failure('Something is wrong');
-    }  
+    Notify.success(`Hooray! We found ${totalHits} images.`);
+    renderPictures(hits);
+    loadMoreBtn.show();
+  } catch (error) {
+    Notify.failure('Something is wrong');
+  }
 }
 
 function renderPictures(hits) {
-    const images = hits
+  const images = hits
     .map(
       ({
         webformatURL,
@@ -75,8 +88,28 @@ function renderPictures(hits) {
       `;
       }
     )
-        .join('');
-    
-    refs.imageContainer.insertAdjacentHTML('beforeend', images);
+    .join('');
+
+  refs.imageContainer.insertAdjacentHTML('beforeend', images);
 }
 
+async function onLoadMoreBtn() {
+  loadMoreBtn.loading();
+  try {
+    const { hits } = await picturesAPI.fetchAPI();
+    renderPictures(hits);
+    loadMoreBtn.endLoading();
+
+    if (hits.length < 40) {
+      loadMoreBtn.hide();
+      Notify.info(`We're sorry, but you've reached the end of search results.`);
+    }
+  } catch (error) {
+    Notify.failure('Something is wrong');
+  }
+}
+
+function clear() {
+  picturesAPI.resetPage();
+  refs.imageContainer.innerHTML = '';
+}
