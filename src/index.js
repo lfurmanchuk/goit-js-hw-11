@@ -1,4 +1,4 @@
-import Notiflix, { Notify } from 'notiflix';
+import { Notify } from 'notiflix';
 import { PicturesAPI } from './js/picturesAPI';
 import { LoadMoreBtn } from './js/loadMoreBtn';
 import SimpleLightbox from "simplelightbox";
@@ -12,7 +12,6 @@ const refs = {
 };
 
 refs.searchForm.addEventListener('submit', onFormSubmit);
-// refs.loadMoreBtn.addEventListener('click', onLoadMoreBtn);
 
 const picturesAPI = new PicturesAPI();
 const loadMoreBtn = new LoadMoreBtn('load-more', onLoadMoreBtn);
@@ -23,8 +22,6 @@ async function onFormSubmit(e) {
 
   picturesAPI.query = e.currentTarget.elements.searchQuery.value.trim();
   picturesAPI.resetPage();
-
-  picturesAPI.fetchAPI().then(data => console.log(data));
 
   if (picturesAPI.query === '') {
     Notify.warning('Enter something');

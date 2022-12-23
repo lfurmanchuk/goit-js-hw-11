@@ -21,12 +21,11 @@ export class PicturesAPI {
         });
 
         const { data } = await axios(`?${options}`);
-        this.page += 1;
+        this.incrementPage();
         return data;
-        
     }
 
-    get query() {
+  get query() {
     return this.searchQuery;
   }
 
