@@ -1,22 +1,12 @@
 .load-more {
     display: block;
-    margin: 0 auto;
-    margin-bottom: 20px;
-    padding: 15px 30px;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    background-color: darkblue;
-    cursor: pointer;
-}
-
-.is-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    border: 0;
+        margin: 25px auto 0 auto;
+        padding: 8px 20px;
+        border: none;
+        border-radius: 5px;
+        background-color: rgb(200, 200, 200);
+        box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%);
+        font: inherit;
+        color: rgb(0, 0, 0);
+        cursor: pointer;
 }
